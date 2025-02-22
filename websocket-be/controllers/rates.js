@@ -1,18 +1,20 @@
 const config = require("../config.js").config;
 const jsonConfig = JSON.parse(JSON.stringify(config));
+const pino = require('pino');
+const logger = pino({level: 'info'});
+
 exports.getRates = (req, res, next) => {
     try {
-        fetch(`https://openexchangerates.org/api/latest.json?app_id=${jsonConfig.exchangeAPIKey}`)
-            .then(res => res.json())
-            .then(data => console.log(data))
-        res.status(200).json({
-            rates: [
-                {euro: 1},
-                {dollar: 2},
-                {ruble: 3}
-            ]
-        })
+        fetch(`https://api.freecurrencyapi.com/v1/latest?apikey=${jsonConfig.exchangeAPIKey}`)
+            .then(response => response.json())
+            .then(data => {
+                const keys = data.data
+                res.status(200).json({
+                    rates: [{euro: keys.EUR}, {dollar: keys.USD}, {ruble: keys.RUB}]
+                })
+            })
+
     } catch (error) {
-        console.log(error)
+        logger.error(error)
     }
 }
