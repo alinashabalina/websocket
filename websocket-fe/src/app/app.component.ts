@@ -1,13 +1,27 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { SocketService } from './socket.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   standalone: true,
-  styleUrl: './app.component.scss'
+  imports: [],
+  styleUrls: []
 })
-export class AppComponent {
-  title = 'websocket-fe';
+export class AppComponent implements OnInit {
+  eur_message: string = '';
+  rub_message: string = '';
+
+  constructor(private socketService: SocketService) {}
+
+  ngOnInit(): void {
+    this.socketService.sendMessage('initial_message','socket connected to the client')
+    this.socketService.onMessage('ratesEUR', (msg: string) => {
+      this.eur_message = msg;
+    });
+    this.socketService.onMessage('ratesRUB', (msg: string) => {
+      this.rub_message = msg;
+    });
+  }
+
 }

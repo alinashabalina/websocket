@@ -1,11 +1,13 @@
 {
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.21.2",
     "pino": "^9.6.0"
   },
   "devDependencies": {
     "body-parse": "^0.1.0",
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "socket.io": "^4.8.1"
   },
   "scripts": {
     "start": "nodemon app.js"
