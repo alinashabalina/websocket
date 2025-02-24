@@ -1,5 +1,4 @@
-const config = require("./config.js").config;
-const jsonConfig = JSON.parse(JSON.stringify(config));
+require('dotenv').config()
 
 const express = require('express');
 const http = require('http');
@@ -10,12 +9,12 @@ const server = http.createServer(app);
 const io = new Server(server, {
     cors: { origin: '*' }
 });
-const port = 8000
+
 io.on('connection', (socket) => {
 
     socket.on('initial_message', (data) => {
         try {
-            fetch(`https://api.freecurrencyapi.com/v1/latest?apikey=${jsonConfig.exchangeAPIKey}`)
+            fetch(`https://api.freecurrencyapi.com/v1/latest?apikey=${process.env.exchangeAPIKey}`)
                 .then(response => response.json())
                 .then(data => {
                     const keys = data.data
@@ -33,6 +32,6 @@ io.on('connection', (socket) => {
     });
 });
 
-server.listen(port, () => {
-    console.log(`Socket.IO server running on http://localhost:${port}`);
+server.listen(process.env.port, () => {
+    console.log(`Socket.IO server running on http://localhost:${process.env.port}`);
 });
