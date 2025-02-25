@@ -10,22 +10,37 @@ const io = new Server(server, {
     cors: { origin: '*' }
 });
 
-io.on('connection', (socket) => {
-
-    socket.on('initial_message', (data) => {
-        try {
-            fetch(`https://api.freecurrencyapi.com/v1/latest?apikey=${process.env.exchangeAPIKey}`)
-                .then(response => response.json())
-                .then(data => {
+function checkRate() {
+    try {
+        fetch(`https://api.freecurrencyapi.com/v1/latest?apikey=${process.env.exchangeAPIKey}`)
+            .then(response => {
+                if (response.status === 200) {
+                    return response.json()
+                }})
+            .then(data => {
+                if (data) {
                     const keys = data.data
-                    io.emit('ratesEUR', Math.round(keys.EUR * 100) / 100)
-                    io.emit('ratesRUB', Math.round(keys.RUB * 100) / 100)
-                })
+                    io.emit('rates', Math.round(keys.EUR * 100) / 100)
+                }
+                else {
+                    io.emit('error', 'Rate limit exceeded')
+                }
+            })
 
-        } catch (error) {
-            console.error(error)
-        }
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+io.on('connection', (socket) => {
+    console.log('connected to', socket.id)
+    socket.on('initial_message', () => {
+        checkRate()
     });
+
+    socket.on('ping', () => {
+        checkRate()
+    })
 
     socket.on('disconnect', () => {
         console.log('User disconnected:', socket.id);
