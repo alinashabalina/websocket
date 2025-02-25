@@ -19,12 +19,12 @@ export class AppComponent implements OnInit {
 
   }
   ngOnInit(): void {
-    this.socketService.sendMessage('initial_message','socket connected to the client')
+    this.sendPing()
     this.socketService.onMessage('rates', (msg: string) => {
       this.eur_message = msg;
       this.sendPing()
     });
-    this.socketService.onMessage('error', (msg: string) => {
+    this.socketService.onMessage('error', () => {
       this.eur_message = 'soon to be updated'
       this.sendPing()
     });

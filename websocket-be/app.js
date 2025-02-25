@@ -34,9 +34,6 @@ function checkRate() {
 
 io.on('connection', (socket) => {
     console.log('connected to', socket.id)
-    socket.on('initial_message', () => {
-        checkRate()
-    });
 
     socket.on('ping', () => {
         checkRate()
